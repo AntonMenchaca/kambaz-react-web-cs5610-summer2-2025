@@ -196,6 +196,7 @@ export default function Lab1() {
             id="wd-text-fields-dob" /><br />
 
         </form>
+
         <h5>Text boxes</h5>
         <label>Biography:</label><br />
         <textarea id="wd-textarea" cols={30} rows={10}>
@@ -258,7 +259,14 @@ export default function Lab1() {
       </div>
 
 
+      <h4>Anchor tag</h4>
+      Please
+      &nbsp;<a href="https://www.lipsum.com" id="wd-lipsum">click here</a>&nbsp;
+      to get dummy text<br />
 
+      Please
+      &nbsp;<a href="https://github.com/AntonMenchaca" id="wd-github">click here</a>&nbsp;
+      to go to my github<br />
     </div>
   );
 }
