@@ -1,8 +1,5 @@
 import { Link } from "react-router-dom";
 
-const classes = ['CS1234 React JS', 'CS5001 Intensive Foundations of CS', 'CS5002 Discrete Structures', 'CS5003 Object Oriented Programming', 'CS5004 Data Structures and Algorithms', 'CS5005 Software Engineering', 'CS5006 Web Development', 'CS5007 Mobile App Development', 'CS5008 Database Systems', 'CS5009 Cloud Computing', 'CS5010 Machine Learning', 'CS5011 Artificial Intelligence'];
-const imageNames = ['reactjs.jpg', 'nodejs.jpg', 'discreteStructures.jpg', 'java.jpg', 'dataStructures.jpg', 'javascript.jpg', 'htmlcss.jpg', 'mobile.jpg', 'database.jpg', 'cloud.jpg', 'machinelearning.jpg', 'artificialintelligence.jpg'];
-
 export default function Dashboard() {
   return (
     <div id="wd-dashboard">
