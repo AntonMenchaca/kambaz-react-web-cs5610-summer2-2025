@@ -16,6 +16,7 @@ import { Container } from 'react-bootstrap';
 import BootstrapGrids from './BootstrapGrids';
 import ScreenSizeLabel from './ScreenSizeLabel';
 import BootstrapTables from './BootstrapTables';
+import BootstrapLists from './BootstrapLists';
 export default function Lab2() {
   return (
     <Container>
@@ -71,20 +72,37 @@ export default function Lab2() {
         </div>
       </div>
       <ForegroundColors />
+      <br />
       <BackgroundColors />
+      <br />
       <Borders />
+      <br />
       <Padding />
+      <br />
       <Margins />
+      <br />
       <Corners />
+      <br />
       <Dimensions />
+      <br />
       <Positions />
+      <br />
       <Zindex />
+      <br />
       <Float />
+      <br />
       <GridLayout />
+      <br />
       <Flex />
+      <br />
       <ReactIcons />
+      <br />
       <BootstrapGrids />
+      <br />
       <ScreenSizeLabel />
+      <br />
       <BootstrapTables />
+      <br />
+      <BootstrapLists />
     </Container>);
 }
