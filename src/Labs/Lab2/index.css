@@ -224,3 +224,8 @@ p#wd-id-selector-2 {
   width: 220px;
   text-align: center;
 }
+#wd-table-title-underline {
+  text-decoration: underline;
+  font-weight: bold;
+  color: #287efe
+}
