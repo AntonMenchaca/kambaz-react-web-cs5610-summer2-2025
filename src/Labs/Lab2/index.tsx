@@ -7,6 +7,8 @@ import Margins from './Margins';
 import Dimensions from './Dimensions';
 import Corners from './Corners';
 import Positions from './Positions';
+import Zindex from './Zindex';
+import Float from './Float';
 export default function Lab2() {
   return (
     <div id="wd-lab2">
@@ -69,5 +71,7 @@ export default function Lab2() {
       <Corners />
       <Dimensions />
       <Positions />
+      <Zindex />
+      <Float />
     </div>);
 }

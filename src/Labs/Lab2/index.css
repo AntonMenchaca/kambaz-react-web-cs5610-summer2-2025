@@ -145,10 +145,32 @@ p#wd-id-selector-2 {
    position: absolute;
    top: 20px;
    left: 120px;      }
-   
+
 .wd-pos-fixed {
   position: fixed;
   right: 0px;
   bottom: 50%;
+}
+
+.wd-zindex-bring-to-front {
+   z-index: 10;
+}
+
+.wd-float-left {
+   float: left;
+   /* Commented out after second part of 2.1.17 */
+   /* height: 100px; */
+}
+
+.wd-float-right {
+   float: right;
+   height: 100px;
+}
+
+
+
+
+.wd-float-done {
+   clear: both;
 }
 
