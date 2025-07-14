@@ -1,4 +1,4 @@
-import { FormGroup, FormLabel, FormControl, FormSelect, Form } from "react-bootstrap";
+import { FormGroup, FormLabel, FormControl, FormSelect, Form, InputGroup } from "react-bootstrap";
 import FormRange from "react-bootstrap/esm/FormRange";
 export default function BootstrapForms() {
   return (
@@ -46,6 +46,21 @@ export default function BootstrapForms() {
           <FormRange min="0" max="5" step="0.5" />
         </FormGroup>
       </div>
+      <br />
+      <div id="wd-css-styling-addons">
+        <h3>Addons</h3>
+        <InputGroup className="mb-3">
+          <InputGroup.Text>$</InputGroup.Text>
+          <InputGroup.Text>0.00</InputGroup.Text>
+          <FormControl />
+        </InputGroup>
+        <InputGroup>
+          <FormControl />
+          <InputGroup.Text>$</InputGroup.Text>
+          <InputGroup.Text>0.00</InputGroup.Text>
+        </InputGroup>
+      </div>
+
 
     </div>
   )
