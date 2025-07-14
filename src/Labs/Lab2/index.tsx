@@ -13,7 +13,7 @@ import GridLayout from './GridLayout';
 import Flex from './Flex';
 import ReactIcons from './ReactIcons';
 import { Container } from 'react-bootstrap';
-
+import BootstrapGrids from './BootstrapGrids';
 export default function Lab2() {
   return (
     <Container>
@@ -81,5 +81,6 @@ export default function Lab2() {
       <GridLayout />
       <Flex />
       <ReactIcons />
+      <BootstrapGrids />
     </Container>);
 }
