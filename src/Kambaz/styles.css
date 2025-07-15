@@ -1,0 +1,21 @@
+body   {  margin: 0;  padding: 0;  }
+body * {  font-family: Arial, Helvetica, sans-serif;  }
+
+#wd-kambaz-navigation {
+  width: 110px;
+}
+
+@media (min-width: 768px) {
+  #wd-kambaz .wd-main-content-offset {
+    padding-left: 140px !important;
+  }
+.wd-dashboard-course {
+  background-color: red;
+}
+}
+
+.wd-dashboard-course {
+  width: 260px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
