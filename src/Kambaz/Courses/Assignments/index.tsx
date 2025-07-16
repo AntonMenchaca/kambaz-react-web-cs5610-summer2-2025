@@ -1,5 +1,5 @@
 import { Button, Form, InputGroup, ListGroup } from "react-bootstrap";
-import { FaPlus, FaSearch, FaCheckCircle } from "react-icons/fa";
+import { FaPlus, FaSearch } from "react-icons/fa";
 import { BsGripVertical } from "react-icons/bs";
 import "./index.css";
 import LessonControlButtons from "../Modules/LessonControlButtons";
