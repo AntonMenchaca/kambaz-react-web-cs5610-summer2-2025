@@ -5,17 +5,84 @@ body * {  font-family: Arial, Helvetica, sans-serif;  }
   width: 110px;
 }
 
+#wd-modules-controls {
+  width: 100%;
+}
+
+#wd-modules {
+  padding-left: 8px;
+  width: 100%;
+}
+#wd-modules-list {
+  padding-left: 8px;
+  width: 100%;
+}
+.text-nowrap {
+  white-space: nowrap;
+}
+.wd-dashboard-course {
+  width: 260px;
+  margin: 30px auto;
+}
+
+.wd-sidebar-icon {
+  width: 40px;
+  height: 24px;
+}
+
+.list-group-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary {
+  --bs-btn-color: #000 !important;
+  --bs-btn-bg: #c7cdd1 !important;
+  --bs-btn-border-color: #c7cdd1 !important;
+  --bs-btn-hover-color: #fff !important;
+}
+.bg-secondary {
+  --bs-secondary-rgb: 199, 205, 209;
+}
+.list-group-item {
+  --bs-list-group-border-color: gray;
+}
+
+.wd-publish-all-btn {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.wd-assignment-list-item {
+  display: flex;
+  flex-direction: row;
+}
+
+
+.wd-title {
+  width: 100%;
+}
+
+.wd-lessons {
+  width: 100%;
+}
+
+.wd-lesson {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  border-left: 3px solid green !important;
+
+}
+
 @media (min-width: 768px) {
   #wd-kambaz .wd-main-content-offset {
     padding-left: 140px !important;
   }
-.wd-dashboard-course {
-  background-color: red;
+  #wd-modules {
+  padding-left: 8px;
 }
-}
-
-.wd-dashboard-course {
-  width: 260px;
-  margin-top: 30px;
-  margin-bottom: 30px;
 }
