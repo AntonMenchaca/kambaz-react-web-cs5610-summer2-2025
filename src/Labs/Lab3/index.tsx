@@ -23,6 +23,11 @@ import Destructing from "./Destructuring";
 import FunctionDestructing from "./FunctionDestructuring";
 import DestructingImports from "./DestructuringImports";
 import Classes from "./Classes";
+import Styles from "./Styles";
+import Add from "./Add";
+import Square from "./Square";
+import Highlight from "./Highlight";
+import PathParameters from "./PathParameters";
 export default function Lab3() {
   return (
     <div id="wd-lab3">
@@ -52,6 +57,16 @@ export default function Lab3() {
       <FunctionDestructing />
       <DestructingImports />
       <Classes />
+      <Styles />
+      <Add a={3} b={4} />
+      <h4>Square of 4</h4>
+      <Square>4</Square>
+      <br />
+      <hr />
+      <Highlight> Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipitratione eaque illo minus cum, saepe totam
+        vel nihil repellat nemo explicabo excepturi consectetur. Modi omnis minus sequi maiores, provident voluptates.
+      </Highlight>
+      <PathParameters />
     </div>
   );
 }
