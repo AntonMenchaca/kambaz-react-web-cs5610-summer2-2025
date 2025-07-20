@@ -1,15 +1,23 @@
 import { AiOutlineDashboard } from "react-icons/ai";
 import { IoCalendarOutline, IoHelpCircleOutline } from "react-icons/io5";
 import { TiGroup } from "react-icons/ti";
-import { LiaBookSolid } from "react-icons/lia";
+import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
 import { FaInbox, FaRegCircleUser, FaChalkboardUser } from "react-icons/fa6";
 import { ListGroup } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 import "./styles.css";
 
 export default function KambazNavigation() {
+  const { pathname } = useLocation();
   const [activeTab, setActiveTab] = useState("Dashboard");
+  const links = [
+    { label: "Dashboard", path: "/Kambaz/Dashboard", icon: AiOutlineDashboard },
+    { label: "Courses", path: "/Kambaz/Dashboard", icon: LiaBookSolid },
+    { label: "Calendar", path: "/Kambaz/Calendar", icon: IoCalendarOutline },
+    { label: "Inbox", path: "/Kambaz/Inbox", icon: FaInbox },
+    { label: "Labs", path: "/Labs", icon: LiaCogSolid },
+  ];
 
   const getClassName = (tabName: string) =>
     activeTab === tabName
@@ -36,95 +44,18 @@ export default function KambazNavigation() {
         <img src="/images/NEU.png" width="75px" />
       </ListGroup.Item>
 
-      <ListGroup.Item
-        to="/Kambaz/Account"
-        as={Link}
-        className={getClassName("Account")}
-        onClick={() => setActiveTab("Account")}
-      >
-        <FaRegCircleUser className={getIconClassName("Account")} />
-        Account
-      </ListGroup.Item>
-
-      <ListGroup.Item
-        to="/Kambaz/Dashboard"
-        as={Link}
-        className={getClassName("Dashboard")}
-        onClick={() => setActiveTab("Dashboard")}
-      >
-        <AiOutlineDashboard className={getIconClassName("Dashboard")} />
-        Dashboard
-      </ListGroup.Item>
-
-      <ListGroup.Item
-        to="/Kambaz/Dashboard"
-        as={Link}
-        className={getClassName("Courses")}
-        onClick={() => setActiveTab("Courses")}
-      >
-        <LiaBookSolid className={getIconClassName("Courses")} />
-        Courses
-      </ListGroup.Item>
-
-      <ListGroup.Item
-        to="/Kambaz/Groups"
-        as={Link}
-        className={getClassName("Groups")}
-        onClick={() => setActiveTab("Groups")}
-      >
-        <TiGroup className={getIconClassName("Groups")} />
-        Groups
-      </ListGroup.Item>
-
-      <ListGroup.Item
-        to="/Kambaz/Calendar"
-        as={Link}
-        className={getClassName("Calendar")}
-        onClick={() => setActiveTab("Calendar")}
-      >
-        <IoCalendarOutline className={getIconClassName("Calendar")} />
-        Calendar
-      </ListGroup.Item>
-
-      <ListGroup.Item
-        to="/Kambaz/Inbox"
-        as={Link}
-        className={getClassName("Inbox")}
-        onClick={() => setActiveTab("Inbox")}
-      >
-        <FaInbox className={getIconClassName("Inbox")} />
-        Inbox
-      </ListGroup.Item>
-
-      <ListGroup.Item
-        to="/Kambaz/History"
-        as={Link}
-        className={getClassName("History")}
-        onClick={() => setActiveTab("History")}
-      >
-        <LiaBookSolid className={getIconClassName("History")} />
-        History
-      </ListGroup.Item>
-
-      <ListGroup.Item
-        to="/Kambaz/Studio"
-        as={Link}
-        className={getClassName("Studio")}
-        onClick={() => setActiveTab("Studio")}
-      >
-        <FaChalkboardUser className={getIconClassName("Studio")} />
-        Studio
-      </ListGroup.Item>
-
-      <ListGroup.Item
-        to="/Kambaz/Help"
-        as={Link}
-        className={getClassName("Help")}
-        onClick={() => setActiveTab("Help")}
-      >
-        <IoHelpCircleOutline className={getIconClassName("Help")} />
-        Help
-      </ListGroup.Item>
+      {links.map(({ label, path, icon: Icon }) => (
+        <ListGroup.Item
+          key={label}
+          to={path}
+          as={Link}
+          className={getClassName(label)}
+          onClick={() => setActiveTab(label)}
+        >
+          <Icon className={getIconClassName(label)} />
+          {label}
+        </ListGroup.Item>
+      ))}
     </ListGroup>
   );
 }
