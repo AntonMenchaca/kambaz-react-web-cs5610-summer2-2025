@@ -22,6 +22,7 @@ import Spreading from "./Spreading";
 import Destructing from "./Destructuring";
 import FunctionDestructing from "./FunctionDestructuring";
 import DestructingImports from "./DestructuringImports";
+import Classes from "./Classes";
 export default function Lab3() {
   return (
     <div id="wd-lab3">
@@ -50,6 +51,7 @@ export default function Lab3() {
       <Destructing />
       <FunctionDestructing />
       <DestructingImports />
+      <Classes />
     </div>
   );
 }
