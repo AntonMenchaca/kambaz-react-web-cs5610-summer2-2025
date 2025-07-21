@@ -1,17 +1,16 @@
 import { AiOutlineDashboard } from "react-icons/ai";
-import { IoCalendarOutline, IoHelpCircleOutline } from "react-icons/io5";
-import { TiGroup } from "react-icons/ti";
+import { IoCalendarOutline, } from "react-icons/io5";
 import { LiaBookSolid, LiaCogSolid } from "react-icons/lia";
-import { FaInbox, FaRegCircleUser, FaChalkboardUser } from "react-icons/fa6";
+import { FaInbox, FaRegCircleUser, } from "react-icons/fa6";
 import { ListGroup } from "react-bootstrap";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import "./styles.css";
 
 export default function KambazNavigation() {
-  const { pathname } = useLocation();
   const [activeTab, setActiveTab] = useState("Dashboard");
   const links = [
+    { label: "Account", path: "/Kambaz/Account", icon: FaRegCircleUser },
     { label: "Dashboard", path: "/Kambaz/Dashboard", icon: AiOutlineDashboard },
     { label: "Courses", path: "/Kambaz/Dashboard", icon: LiaBookSolid },
     { label: "Calendar", path: "/Kambaz/Calendar", icon: IoCalendarOutline },
