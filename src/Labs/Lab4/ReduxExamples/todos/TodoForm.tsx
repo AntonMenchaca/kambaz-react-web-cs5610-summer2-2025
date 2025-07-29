@@ -9,10 +9,11 @@ export default function TodoForm(
   return (
     <ListGroup.Item>
       <div style={{ display: "flex", justifyContent: "space-between", margin: 5, gap: 5 }}>
-        <Button onClick={() => dispatch(addTodo(todo))}
-          id="wd-add-todo-click"> Add </Button>
-        <Button onClick={() => dispatch(updateTodo(todo))}
+        <Button variant="warning" onClick={() => dispatch(updateTodo(todo))}
           id="wd-update-todo-click"> Update </Button>
+        <Button variant='success' onClick={() => dispatch(addTodo(todo))}
+          id="wd-add-todo-click"> Add </Button>
+
       </div>
       <FormControl
         defaultValue={todo.title}

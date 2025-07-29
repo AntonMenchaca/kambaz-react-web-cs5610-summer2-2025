@@ -31,11 +31,18 @@ import PathParameters from "./PathParameters";
 import { useSelector } from "react-redux";
 import { ListGroup } from "react-bootstrap";
 export default function Lab3() {
-  const { todos } = useSelector((state: any) => state.todosReducer);
+  const todos = useSelector((state: any) => state.todosReducer.todos);
   console.log('Hello World!');
   return (
     <div id="wd-lab3">
       <h3>Anton Menchaca - Lab 3 - JavaScript</h3>
+      <ListGroup>
+        {todos.map((todo: any) => (
+          <ListGroup.Item key={todo.id}>
+            {todo.title}
+          </ListGroup.Item>
+        ))}
+      </ListGroup>
       <VariablesAndConstants />
       <VariableTypes />
       <BooleanVariables />
@@ -55,15 +62,7 @@ export default function Lab3() {
       <FindIndex />
       <FilterFunction />
       <House />
-      <ListGroup>
-        {todos.map((todo: any) => (
-          <ListGroup.Item key={todo.id}>
-            {todo.title}
-          </ListGroup.Item>
-        ))}
-      </ListGroup>
-      <hr />
-
+      <TodoList />
       <Spreading />
       <Destructing />
       <FunctionDestructing />
