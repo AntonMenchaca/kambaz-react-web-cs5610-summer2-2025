@@ -5,17 +5,14 @@ import { addModule, editModule, updateModule, deleteModule }
 import { useSelector, useDispatch } from "react-redux";
 import { FormControl, ListGroup } from "react-bootstrap";
 import { useParams } from "react-router";
-import * as db from "../../Database";
 import LessonControlButtons from "./LessonControlButtons";
 import ModuleControlButtons from "./ModuleControlButtons";
-import { v4 as uuidv4 } from "uuid";
 import { useState } from "react";
 export default function Modules() {
   const { cid } = useParams();
   const { modules } = useSelector((state: any) => state.modulesReducer);
   const dispatch = useDispatch();
   const [moduleName, setModuleName] = useState("");
-
 
 
   return (
