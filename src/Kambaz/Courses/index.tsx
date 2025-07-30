@@ -10,6 +10,7 @@ import { useState } from "react";
 
 export default function Courses({ courses }: { courses: any[]; }) {
   const { cid } = useParams();
+
   const course = courses.find((c) => c._id === cid);
   const { pathname } = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);

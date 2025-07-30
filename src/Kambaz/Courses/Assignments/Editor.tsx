@@ -2,7 +2,7 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addAssignment, updateAssignment } from "./reducer";
+import { addAssignment } from "./reducer";
 import { Assignment } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from 'react-router-dom';
