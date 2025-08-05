@@ -1,14 +1,17 @@
 import {PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { enrollment, enrollmentState } from "./types";
-import * as db from "../Database";
+
 const initialState: enrollmentState = {
-  enrollments: db.enrollments,
+  enrollments: [],
 }
 
 const enrollmentSlice = createSlice({
   name: "enrollment",
   initialState,
   reducers: {
+    setEnrollments: (state, action: PayloadAction<enrollment[]>) => {
+      state.enrollments = action.payload;
+    },
     addEnrollment: (state, action: PayloadAction<enrollment>) => {
       state.enrollments.push(action.payload);
     },
@@ -28,7 +31,7 @@ const enrollmentSlice = createSlice({
   },
 });
 
-export const { addEnrollment, deleteEnrollment, updateEnrollment } =
+export const { setEnrollments, addEnrollment, deleteEnrollment, updateEnrollment } =
   enrollmentSlice.actions;
 
 export default enrollmentSlice.reducer;

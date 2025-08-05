@@ -11,8 +11,6 @@ const courseSlice = createSlice({
   initialState,
   reducers: {
     addCourse: (state, action: PayloadAction<course>) => {
-      console.log("Adding course:", action.payload);
-      console.log('the state before adding:', state);
       state.courses.push(action.payload);
     },
     deleteCourse: (state, action: PayloadAction<{ _id: string }>) => {

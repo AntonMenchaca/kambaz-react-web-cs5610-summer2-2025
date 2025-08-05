@@ -13,6 +13,7 @@ import * as userClient from "./Account/client";
 
 export default function Kambaz() {
   const [courses, setCourses] = useState<any[]>([]);
+  const [allCourses, setAllCourses] = useState<any[]>([]);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
 
   const [course, setCourse] = useState<any>({
@@ -29,14 +30,32 @@ export default function Kambaz() {
     }
   };
 
+  const fetchAllCourses = async () => {
+    try {
+      const allCourses = await courseClient.fetchAllCourses();
+      setAllCourses(allCourses);
+    } catch (error) {
+      console.error("Error fetching all courses:", error);
+    }
+  };
+
   const addNewCourse = async () => {
     const newCourse = await userClient.createCourse(course);
     setCourses([...courses, newCourse]);
+    // Also add to allCourses if it exists
+    if (allCourses.length > 0) {
+      setAllCourses([...allCourses, newCourse]);
+    }
   };
 
   const deleteCourse = async (courseId: string) => {
-    await courseClient.deleteCourse(courseId);
-    setCourses(courses.filter((course) => course._id !== courseId));
+    try {
+      await courseClient.deleteCourse(courseId);
+      setCourses(courses.filter((course) => course._id !== courseId));
+      setAllCourses(allCourses.filter((course) => course._id !== courseId));
+    } catch (error) {
+      console.error("Error deleting course:", error);
+    }
   };
 
   const updateCourse = async () => {
@@ -45,10 +64,35 @@ export default function Kambaz() {
       if (c._id === course._id) { return course; }
       else { return c; }
     }));
+    setAllCourses(allCourses.map((c) => {
+      if (c._id === course._id) { return course; }
+      else { return c; }
+    }));
+  };
+
+  const enrollInCourse = async (courseId: string) => {
+    try {
+      await userClient.enrollInCourse(currentUser._id, courseId);
+      // Refresh enrolled courses
+      await fetchCourses();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const unenrollFromCourse = async (courseId: string) => {
+    try {
+      await userClient.unenrollFromCourse(currentUser._id, courseId);
+      // Refresh enrolled courses
+      await fetchCourses();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
     fetchCourses();
+    fetchAllCourses();
   }, [currentUser]);
 
 
@@ -64,11 +108,14 @@ export default function Kambaz() {
               <ProtectedRoute>
                 <Dashboard
                   courses={courses}
+                  allCourses={allCourses}
                   course={course}
                   setCourse={setCourse}
                   addNewCourse={addNewCourse}
-                  deleteCourse={() => deleteCourse(course._id)}
-                  updateCourse={updateCourse} />
+                  deleteCourse={deleteCourse}
+                  updateCourse={updateCourse}
+                  enrollInCourse={enrollInCourse}
+                  unenrollFromCourse={unenrollFromCourse} />
               </ProtectedRoute>
             } />
             <Route path="/Courses/:cid/*" element={

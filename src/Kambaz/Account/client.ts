@@ -39,3 +39,13 @@ export const createCourse = async (course: any) => {
   const { data } = await axiosWithCredentials.post(`${USERS_API}/current/courses`, course);
   return data;
 };
+
+export const enrollInCourse = async (userId: string, courseId: string) => {
+  const { data } = await axiosWithCredentials.post(`${USERS_API}/${userId}/courses/${courseId}`);
+  return data;
+};
+
+export const unenrollFromCourse = async (userId: string, courseId: string) => {
+  const { data } = await axiosWithCredentials.delete(`${USERS_API}/${userId}/courses/${courseId}`);
+  return data;
+};

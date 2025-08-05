@@ -11,6 +11,9 @@ export default function AssignmentEditor() {
   const { aid, } = useParams();
   const dispatch = useDispatch();
   const assignments = useSelector((state: any) => state.assignmentReducer.assignments);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const navigate = useNavigate();
+
   const defaultAssignment: Assignment = {
     _id: uuidv4(),
     title: "",
@@ -21,16 +24,34 @@ export default function AssignmentEditor() {
     available_from: "",
     available_until: ""
   };
+
   const foundAssignment = assignments.find((a: Assignment) => a._id === aid);
-  console.log("Found Assignment:", foundAssignment);
   const [currentAssignment, setCurrentAssignment] = useState<Assignment>(foundAssignment || defaultAssignment);
 
   useEffect(() => {
+    const defaultAssignmentLocal: Assignment = {
+      _id: uuidv4(),
+      title: "",
+      course: 'RS101',
+      description: "",
+      points: 0,
+      due_date: "",
+      available_from: "",
+      available_until: ""
+    };
     const assignment = assignments.find((a: Assignment) => a._id === aid);
-    setCurrentAssignment(assignment || defaultAssignment);
-  }, [aid]);
+    setCurrentAssignment(assignment || defaultAssignmentLocal);
+  }, [aid, assignments]);
 
-  const navigate = useNavigate();
+  // Only allow faculty to access the assignment editor
+  if (currentUser.role !== 'FACULTY') {
+    return (
+      <div className="p-4">
+        <h3>Access Denied</h3>
+        <p>Only faculty members can edit assignments.</p>
+      </div>
+    );
+  }
 
   return (
     <div id="wd-assignments-editor" className="p-4">
@@ -41,7 +62,6 @@ export default function AssignmentEditor() {
             type="text"
             value={currentAssignment.title}
             onChange={(e) => {
-              console.log("Title changed:", e.target.value);
               setCurrentAssignment({ ...currentAssignment, title: e.target.value });
             }}
           />

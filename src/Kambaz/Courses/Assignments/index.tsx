@@ -6,14 +6,11 @@ import LessonControlButtons from "../Modules/LessonControlButtons";
 import { useSelector } from "react-redux";
 import { Assignment } from "./types";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
 
 export default function Assignments() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { assignments }: { assignments: Assignment[] } = useSelector((state: any) => state.assignmentReducer);
-  useEffect(() => {
-    console.log("Assignments loaded:", assignments);
-  }, [assignments]);
+
   return (
     <div id="wd-assignments" className="p-4">
       {/* Search and buttons */}
@@ -46,9 +43,11 @@ export default function Assignments() {
 
         <div className="wd-assignment-title">
           <div className="text-secondary border-rounded p-1 ">40% of Total</div>
-          <Link to={`/Kambaz/Courses/${assignments[0]?.course}/Assignments/New`}>
-            <FaPlus size={24} style={{ cursor: "pointer" }} />
-          </Link>
+          {currentUser.role === 'FACULTY' && (
+            <Link to={`/Kambaz/Courses/${assignments[0]?.course}/Assignments/New`}>
+              <FaPlus size={24} style={{ cursor: "pointer" }} />
+            </Link>
+          )}
           <LessonControlButtons />
         </div>
       </div>
