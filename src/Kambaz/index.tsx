@@ -6,10 +6,9 @@ import Courses from "./Courses";
 import "./styles.css";
 import { useState, useEffect } from "react";
 import ProtectedRoute from "./Account/ProtectedRoute";
-import { useDispatch, useSelector } from "react-redux";
-import { deleteCourse, updateCourse } from "./Courses/reducer";
+import { useSelector } from "react-redux";
 import Session from "./Account/Session";
-import * as client from "./Courses/client";
+import * as courseClient from "./Courses/client";
 import * as userClient from "./Account/client";
 
 export default function Kambaz() {
@@ -20,7 +19,6 @@ export default function Kambaz() {
     _id: "1234", name: "New Course", number: "New Number",
     startDate: "2023-09-10", endDate: "2023-12-15", description: "New Description",
   });
-  const dispatch = useDispatch();
 
   const fetchCourses = async () => {
     try {
@@ -34,6 +32,19 @@ export default function Kambaz() {
   const addNewCourse = async () => {
     const newCourse = await userClient.createCourse(course);
     setCourses([...courses, newCourse]);
+  };
+
+  const deleteCourse = async (courseId: string) => {
+    await courseClient.deleteCourse(courseId);
+    setCourses(courses.filter((course) => course._id !== courseId));
+  };
+
+  const updateCourse = async () => {
+    await courseClient.updateCourse(course);
+    setCourses(courses.map((c) => {
+      if (c._id === course._id) { return course; }
+      else { return c; }
+    }));
   };
 
   useEffect(() => {
@@ -56,8 +67,8 @@ export default function Kambaz() {
                   course={course}
                   setCourse={setCourse}
                   addNewCourse={addNewCourse}
-                  deleteCourse={() => dispatch(deleteCourse(course._id))}
-                  updateCourse={() => dispatch(updateCourse(course))} />
+                  deleteCourse={() => deleteCourse(course._id)}
+                  updateCourse={updateCourse} />
               </ProtectedRoute>
             } />
             <Route path="/Courses/:cid/*" element={
