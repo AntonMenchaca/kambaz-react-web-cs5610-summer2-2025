@@ -4,15 +4,17 @@ import Dashboard from "./Dashboard";
 import KambazNavigation from "./Navigation";
 import Courses from "./Courses";
 import "./styles.css";
-import { useState } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useState, useEffect } from "react";
 import ProtectedRoute from "./Account/ProtectedRoute";
 import { useDispatch, useSelector } from "react-redux";
-import { addCourse, deleteCourse, updateCourse } from "./Courses/reducer";
+import { deleteCourse, updateCourse } from "./Courses/reducer";
+import Session from "./Account/Session";
+import * as client from "./Courses/client";
+import * as userClient from "./Account/client";
+
 export default function Kambaz() {
-  const courses = useSelector((state: any) => state.courseReducer.courses);
-
-
+  const [courses, setCourses] = useState<any[]>([]);
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
 
   const [course, setCourse] = useState<any>({
     _id: "1234", name: "New Course", number: "New Number",
@@ -20,34 +22,54 @@ export default function Kambaz() {
   });
   const dispatch = useDispatch();
 
+  const fetchCourses = async () => {
+    try {
+      const courses = await userClient.findMyCourses();
+      setCourses(courses);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const addNewCourse = async () => {
+    const newCourse = await userClient.createCourse(course);
+    setCourses([...courses, newCourse]);
+  };
+
+  useEffect(() => {
+    fetchCourses();
+  }, [currentUser]);
+
 
   return (
-    <div id="wd-kambaz">
-      <KambazNavigation />
-      <div className="wd-main-content-offset p-3">
-        <Routes>
-          <Route path="/" element={<Navigate to="Account" />} />
-          <Route path="/Account/*" element={<Account />} />
-          <Route path="/Dashboard" element={
-            <ProtectedRoute>
-              <Dashboard
-                courses={courses}
-                course={course}
-                setCourse={setCourse}
-                addNewCourse={() => dispatch(addCourse({ ...course, _id: uuidv4() }))}
-                deleteCourse={() => dispatch(deleteCourse(course._id))}
-                updateCourse={() => dispatch(updateCourse(course))} />
-            </ProtectedRoute>
-          } />
-          <Route path="/Courses/:cid/*" element={
-            <ProtectedRoute>
-              <Courses courses={courses} />
-            </ProtectedRoute>
-          } />
-          <Route path="/Calendar" element={<h1>Calendar</h1>} />
-          <Route path="/Inbox" element={<h1>Inbox</h1>} />
-        </Routes>
+    <Session>
+      <div id="wd-kambaz">
+        <KambazNavigation />
+        <div className="wd-main-content-offset p-3">
+          <Routes>
+            <Route path="/" element={<Navigate to="Account" />} />
+            <Route path="/Account/*" element={<Account />} />
+            <Route path="/Dashboard" element={
+              <ProtectedRoute>
+                <Dashboard
+                  courses={courses}
+                  course={course}
+                  setCourse={setCourse}
+                  addNewCourse={addNewCourse}
+                  deleteCourse={() => dispatch(deleteCourse(course._id))}
+                  updateCourse={() => dispatch(updateCourse(course))} />
+              </ProtectedRoute>
+            } />
+            <Route path="/Courses/:cid/*" element={
+              <ProtectedRoute>
+                <Courses courses={courses} />
+              </ProtectedRoute>
+            } />
+            <Route path="/Calendar" element={<h1>Calendar</h1>} />
+            <Route path="/Inbox" element={<h1>Inbox</h1>} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Session>
   );
 }

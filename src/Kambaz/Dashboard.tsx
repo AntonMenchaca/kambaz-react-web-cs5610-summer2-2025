@@ -11,14 +11,7 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, de
   const [showEnrollments, setShowEnrollments] = useState(false);
   const dispatch = useDispatch();
   console.log("enrollments", enrollments);
-  const allCourses = courses;
-  courses = courses.filter((course: any) =>
-    enrollments.some(
-      (enrollment: enrollment) =>
-        enrollment.user === currentUser._id &&
-        enrollment.course === course._id
-    )
-  );
+  
   return (
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> <hr />
@@ -42,16 +35,10 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse, de
           <hr />
         </>}
 
-      <h2 id="wd-dashboard-published">Published Courses ({!showEnrollments ? allCourses.length : courses.length})</h2> <hr />
+      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> <hr />
       <div id="wd-dashboard-courses">
         <Row xs={1} md={5} className="g-4">
-          {allCourses.filter((course: any) => {
-            if (showEnrollments) {
-              return enrollments.some((enrollment: enrollment) => enrollment.course === course._id && enrollment.user === currentUser._id);
-            }
-            return true;
-          })
-            .map((course: any) => (
+          {courses.map((course: any) => (
 
               <Col className="wd-dashboard-course" style={{ width: "300px" }}>
                 <Card>
