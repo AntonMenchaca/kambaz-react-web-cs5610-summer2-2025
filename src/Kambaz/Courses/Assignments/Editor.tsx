@@ -15,8 +15,10 @@ export default function AssignmentEditor() {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const navigate = useNavigate();
 
+  const isNewAssignment = aid === "New";
+
   const defaultAssignment: Assignment = {
-    _id: uuidv4(),
+    _id: isNewAssignment ? uuidv4() : "",
     title: "",
     course: cid || 'RS101',
     description: "",
@@ -27,22 +29,30 @@ export default function AssignmentEditor() {
   };
 
   const foundAssignment = assignments.find((a: Assignment) => a._id === aid);
-  const [currentAssignment, setCurrentAssignment] = useState<Assignment>(foundAssignment || defaultAssignment);
+  const [currentAssignment, setCurrentAssignment] = useState<Assignment>(
+    isNewAssignment ? defaultAssignment : (foundAssignment || defaultAssignment)
+  );
 
   useEffect(() => {
-    const defaultAssignmentLocal: Assignment = {
-      _id: uuidv4(),
-      title: "",
-      course: cid || 'RS101',
-      description: "",
-      points: 0,
-      due_date: "",
-      available_from: "",
-      available_until: ""
-    };
-    const assignment = assignments.find((a: Assignment) => a._id === aid);
-    setCurrentAssignment(assignment || defaultAssignmentLocal);
-  }, [aid, assignments, cid]);
+    if (isNewAssignment) {
+      const newAssignment: Assignment = {
+        _id: uuidv4(),
+        title: "",
+        course: cid || 'RS101',
+        description: "",
+        points: 0,
+        due_date: "",
+        available_from: "",
+        available_until: ""
+      };
+      setCurrentAssignment(newAssignment);
+    } else {
+      const assignment = assignments.find((a: Assignment) => a._id === aid);
+      if (assignment) {
+        setCurrentAssignment(assignment);
+      }
+    }
+  }, [aid, assignments, cid, isNewAssignment]);
 
   // Only allow faculty to access the assignment editor
   if (currentUser.role !== 'FACULTY') {
@@ -205,17 +215,19 @@ export default function AssignmentEditor() {
             onClick={async () => {
               try {
                 if (!cid) return;
-                
-                if (aid === "New") {
+
+                if (isNewAssignment) {
                   // Creating a new assignment
+                  console.log("Creating new assignment:", currentAssignment);
                   const newAssignment = await assignmentsClient.createAssignmentForCourse(cid, currentAssignment);
                   dispatch(addAssignment(newAssignment));
                 } else {
                   // Updating an existing assignment
+                  console.log("Updating existing assignment:", currentAssignment);
                   const updatedAssignment = await assignmentsClient.updateAssignment(currentAssignment);
                   dispatch(updateAssignment(updatedAssignment));
                 }
-                
+
                 navigate(`/Kambaz/Courses/${cid}/Assignments`);
               } catch (error) {
                 console.error("Error saving assignment:", error);
@@ -223,7 +235,7 @@ export default function AssignmentEditor() {
             }}
             id="wd-save-assignment"
           >
-            Save
+            {isNewAssignment ? "Create Assignment" : "Save"}
           </Button>
         </div>
       </Form>
