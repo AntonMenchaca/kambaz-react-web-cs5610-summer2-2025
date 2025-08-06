@@ -2,13 +2,14 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addAssignment } from "./reducer";
+import { addAssignment, updateAssignment } from "./reducer";
 import { Assignment } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from 'react-router-dom';
+import * as assignmentsClient from "./client";
 
 export default function AssignmentEditor() {
-  const { aid, } = useParams();
+  const { aid, cid } = useParams();
   const dispatch = useDispatch();
   const assignments = useSelector((state: any) => state.assignmentReducer.assignments);
   const { currentUser } = useSelector((state: any) => state.accountReducer);
@@ -17,7 +18,7 @@ export default function AssignmentEditor() {
   const defaultAssignment: Assignment = {
     _id: uuidv4(),
     title: "",
-    course: 'RS101',
+    course: cid || 'RS101',
     description: "",
     points: 0,
     due_date: "",
@@ -32,7 +33,7 @@ export default function AssignmentEditor() {
     const defaultAssignmentLocal: Assignment = {
       _id: uuidv4(),
       title: "",
-      course: 'RS101',
+      course: cid || 'RS101',
       description: "",
       points: 0,
       due_date: "",
@@ -41,7 +42,7 @@ export default function AssignmentEditor() {
     };
     const assignment = assignments.find((a: Assignment) => a._id === aid);
     setCurrentAssignment(assignment || defaultAssignmentLocal);
-  }, [aid, assignments]);
+  }, [aid, assignments, cid]);
 
   // Only allow faculty to access the assignment editor
   if (currentUser.role !== 'FACULTY') {
@@ -191,7 +192,7 @@ export default function AssignmentEditor() {
             variant="secondary"
             onClick={() => {
               setCurrentAssignment(foundAssignment || defaultAssignment)
-              navigate(`/Kambaz/Courses/${foundAssignment?.course || defaultAssignment.course}/Assignments`);
+              navigate(`/Kambaz/Courses/${cid}/Assignments`);
 
             }}
             className="me-2"
@@ -201,9 +202,24 @@ export default function AssignmentEditor() {
           </Button>
           <Button
             variant="danger"
-            onClick={() => {
-              dispatch(addAssignment(currentAssignment))
-              navigate('/Kambaz/Courses/RS101/Assignments');
+            onClick={async () => {
+              try {
+                if (!cid) return;
+                
+                if (aid === "New") {
+                  // Creating a new assignment
+                  const newAssignment = await assignmentsClient.createAssignmentForCourse(cid, currentAssignment);
+                  dispatch(addAssignment(newAssignment));
+                } else {
+                  // Updating an existing assignment
+                  const updatedAssignment = await assignmentsClient.updateAssignment(currentAssignment);
+                  dispatch(updateAssignment(updatedAssignment));
+                }
+                
+                navigate(`/Kambaz/Courses/${cid}/Assignments`);
+              } catch (error) {
+                console.error("Error saving assignment:", error);
+              }
             }}
             id="wd-save-assignment"
           >

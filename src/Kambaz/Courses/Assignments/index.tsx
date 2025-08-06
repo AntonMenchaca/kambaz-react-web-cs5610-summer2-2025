@@ -3,13 +3,32 @@ import { FaPlus, FaSearch } from "react-icons/fa";
 import { BsGripVertical } from "react-icons/bs";
 import "./index.css";
 import LessonControlButtons from "../Modules/LessonControlButtons";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Assignment } from "./types";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { setAssignments } from "./reducer";
+import * as assignmentsClient from "./client";
 
 export default function Assignments() {
+  const { cid } = useParams();
+  const dispatch = useDispatch();
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const { assignments }: { assignments: Assignment[] } = useSelector((state: any) => state.assignmentReducer);
+
+  const fetchAssignments = async () => {
+    if (!cid) return;
+    try {
+      const assignments = await assignmentsClient.findAssignmentsForCourse(cid);
+      dispatch(setAssignments(assignments));
+    } catch (error) {
+      console.error("Error fetching assignments:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAssignments();
+  }, [cid]);
 
   return (
     <div id="wd-assignments" className="p-4">
@@ -30,10 +49,12 @@ export default function Assignments() {
             <FaPlus className="me-2" />
             Group
           </Button>
-          <Button variant="danger">
-            <FaPlus className="me-2" />
-            Assignment
-          </Button>
+          <Link to={`/Kambaz/Courses/${cid}/Assignments/New`}>
+            <Button variant="danger">
+              <FaPlus className="me-2" />
+              Assignment
+            </Button>
+          </Link>
         </div>}
       </div>
 
@@ -44,7 +65,7 @@ export default function Assignments() {
         <div className="wd-assignment-title">
           <div className="text-secondary border-rounded p-1 ">40% of Total</div>
           {currentUser.role === 'FACULTY' && (
-            <Link to={`/Kambaz/Courses/${assignments[0]?.course}/Assignments/New`}>
+            <Link to={`/Kambaz/Courses/${cid}/Assignments/New`}>
               <FaPlus size={24} style={{ cursor: "pointer" }} />
             </Link>
           )}
