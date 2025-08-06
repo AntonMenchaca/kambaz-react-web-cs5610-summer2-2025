@@ -2,7 +2,7 @@ import { Form, Button, Row, Col } from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addAssignment, updateAssignment } from "./reducer";
+import { addAssignment, updateAssignment, deleteAssignment } from "./reducer";
 import { Assignment } from "./types";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from 'react-router-dom';
@@ -210,6 +210,31 @@ export default function AssignmentEditor() {
           >
             Cancel
           </Button>
+          
+          {!isNewAssignment && (
+            <Button
+              variant="outline-danger"
+              onClick={async () => {
+                try {
+                  if (!currentAssignment._id) return;
+                  
+                  // Confirm before deleting
+                  if (window.confirm(`Are you sure you want to delete "${currentAssignment.title}"?`)) {
+                    await assignmentsClient.deleteAssignment(currentAssignment._id);
+                    dispatch(deleteAssignment({ _id: currentAssignment._id }));
+                    navigate(`/Kambaz/Courses/${cid}/Assignments`);
+                  }
+                } catch (error) {
+                  console.error("Error deleting assignment:", error);
+                }
+              }}
+              className="me-2"
+              id="wd-delete-assignment"
+            >
+              Delete
+            </Button>
+          )}
+          
           <Button
             variant="danger"
             onClick={async () => {
