@@ -54,12 +54,21 @@ export default function AssignmentEditor() {
     }
   }, [aid, assignments, cid, isNewAssignment]);
 
-  // Only allow faculty to access the assignment editor
-  if (currentUser.role !== 'FACULTY') {
+  // Check if user is faculty
+  const isFaculty = currentUser.role === 'FACULTY';
+
+  // For non-faculty viewing new assignments, redirect to assignments list
+  if (!isFaculty && isNewAssignment) {
     return (
       <div className="p-4">
         <h3>Access Denied</h3>
-        <p>Only faculty members can edit assignments.</p>
+        <p>Only faculty members can create new assignments.</p>
+        <Button
+          variant="primary"
+          onClick={() => navigate(`/Kambaz/Courses/${cid}/Assignments`)}
+        >
+          Back to Assignments
+        </Button>
       </div>
     );
   }
@@ -75,6 +84,7 @@ export default function AssignmentEditor() {
             onChange={(e) => {
               setCurrentAssignment({ ...currentAssignment, title: e.target.value });
             }}
+            readOnly={!isFaculty}
           />
         </Form.Group>
 
@@ -87,6 +97,7 @@ export default function AssignmentEditor() {
             onChange={(e) =>
               setCurrentAssignment({ ...currentAssignment, description: e.target.value })
             }
+            readOnly={!isFaculty}
           />
         </Form.Group>
 
@@ -99,6 +110,7 @@ export default function AssignmentEditor() {
               onChange={(e) =>
                 setCurrentAssignment({ ...currentAssignment, points: Number(e.target.value) })
               }
+              readOnly={!isFaculty}
             />
           </Col>
         </Form.Group>
@@ -169,6 +181,7 @@ export default function AssignmentEditor() {
               onChange={(e) =>
                 setCurrentAssignment({ ...currentAssignment, due_date: e.target.value })
               }
+              readOnly={!isFaculty}
             />
           </Col>
         </Form.Group>
@@ -182,6 +195,7 @@ export default function AssignmentEditor() {
               onChange={(e) =>
                 setCurrentAssignment({ ...currentAssignment, available_from: e.target.value })
               }
+              readOnly={!isFaculty}
             />
           </Form.Group>
           <Form.Group as={Col} controlId="wd-available-until">
@@ -192,76 +206,83 @@ export default function AssignmentEditor() {
               onChange={(e) =>
                 setCurrentAssignment({ ...currentAssignment, available_until: e.target.value })
               }
+              readOnly={!isFaculty}
             />
           </Form.Group>
         </Row>
 
         <div className="mt-4">
+          {isFaculty ? (
+            <>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setCurrentAssignment(foundAssignment || defaultAssignment)
+                  navigate(`/Kambaz/Courses/${cid}/Assignments`);
+                }}
+                className="me-2"
+                id="wd-cancel-assignment"
+              >
+                Cancel
+              </Button>
 
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setCurrentAssignment(foundAssignment || defaultAssignment)
-              navigate(`/Kambaz/Courses/${cid}/Assignments`);
+              {!isNewAssignment && (
+                <Button
+                  variant="outline-danger"
+                  onClick={async () => {
+                    try {
+                      if (!currentAssignment._id) return;
 
-            }}
-            className="me-2"
-            id="wd-cancel-assignment"
-          >
-            Cancel
-          </Button>
-          
-          {!isNewAssignment && (
-            <Button
-              variant="outline-danger"
-              onClick={async () => {
-                try {
-                  if (!currentAssignment._id) return;
-                  
-                  // Confirm before deleting
-                  if (window.confirm(`Are you sure you want to delete "${currentAssignment.title}"?`)) {
-                    await assignmentsClient.deleteAssignment(currentAssignment._id);
-                    dispatch(deleteAssignment({ _id: currentAssignment._id }));
+                      // Confirm before deleting
+                      if (window.confirm(`Are you sure you want to delete "${currentAssignment.title}"?`)) {
+                        await assignmentsClient.deleteAssignment(currentAssignment._id);
+                        dispatch(deleteAssignment({ _id: currentAssignment._id }));
+                        navigate(`/Kambaz/Courses/${cid}/Assignments`);
+                      }
+                    } catch (error) {
+                      console.error("Error deleting assignment:", error);
+                    }
+                  }}
+                  className="me-2"
+                  id="wd-delete-assignment"
+                >
+                  Delete
+                </Button>
+              )}
+
+              <Button
+                variant="danger"
+                onClick={async () => {
+                  try {
+                    if (!cid) return;
+
+                    if (isNewAssignment) {
+                      const newAssignment = await assignmentsClient.createAssignmentForCourse(cid, currentAssignment);
+                      dispatch(addAssignment(newAssignment));
+                    } else {
+                      const updatedAssignment = await assignmentsClient.updateAssignment(currentAssignment);
+                      dispatch(updateAssignment(updatedAssignment));
+                    }
+
                     navigate(`/Kambaz/Courses/${cid}/Assignments`);
+                  } catch (error) {
+                    console.error("Error saving assignment:", error);
                   }
-                } catch (error) {
-                  console.error("Error deleting assignment:", error);
-                }
-              }}
-              className="me-2"
-              id="wd-delete-assignment"
+                }}
+                id="wd-save-assignment"
+              >
+                {isNewAssignment ? "Create Assignment" : "Save"}
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="primary"
+              onClick={() => navigate(`/Kambaz/Courses/${cid}/Assignments`)}
+              id="wd-back-to-assignments"
             >
-              Delete
+              Back to Assignments
             </Button>
           )}
-          
-          <Button
-            variant="danger"
-            onClick={async () => {
-              try {
-                if (!cid) return;
-
-                if (isNewAssignment) {
-                  // Creating a new assignment
-                  console.log("Creating new assignment:", currentAssignment);
-                  const newAssignment = await assignmentsClient.createAssignmentForCourse(cid, currentAssignment);
-                  dispatch(addAssignment(newAssignment));
-                } else {
-                  // Updating an existing assignment
-                  console.log("Updating existing assignment:", currentAssignment);
-                  const updatedAssignment = await assignmentsClient.updateAssignment(currentAssignment);
-                  dispatch(updateAssignment(updatedAssignment));
-                }
-
-                navigate(`/Kambaz/Courses/${cid}/Assignments`);
-              } catch (error) {
-                console.error("Error saving assignment:", error);
-              }
-            }}
-            id="wd-save-assignment"
-          >
-            {isNewAssignment ? "Create Assignment" : "Save"}
-          </Button>
         </div>
       </Form>
     </div>
