@@ -17,7 +17,7 @@ export default function ModulesControls({ moduleName, setModuleName, addModule }
   } else {
     return (
       <div id="wd-modules-controls" className="text-nowrap">
-        <Button variant="danger" onClick={() => handleShow} size="lg" className="me-1 float-end" id="wd-add-module-btn">
+        <Button variant="danger" onClick={handleShow} size="lg" className="me-1 float-end" id="wd-add-module-btn">
           <FaPlus className="position-relative me-2" style={{ bottom: "1px" }} />
           Module
         </Button>

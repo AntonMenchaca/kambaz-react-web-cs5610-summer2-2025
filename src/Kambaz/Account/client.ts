@@ -5,6 +5,11 @@ export const axiosWithCredentials = axios.create({ withCredentials: true });
 export const REMOTE_SERVER = import.meta.env.VITE_REMOTE_SERVER;
 export const USERS_API = `${REMOTE_SERVER}/api/users`;
 
+export const findAllUsers = async () => {
+  const response = await axiosWithCredentials.get(USERS_API);
+  return response.data;
+};
+
 export const signin = async (credentials: any) => {
   const response = await axiosWithCredentials.post(`${USERS_API}/signin`, credentials);
   return response.data;
@@ -48,4 +53,39 @@ export const enrollInCourse = async (userId: string, courseId: string) => {
 export const unenrollFromCourse = async (userId: string, courseId: string) => {
   const { data } = await axiosWithCredentials.delete(`${USERS_API}/${userId}/courses/${courseId}`);
   return data;
+};
+
+export const findUsersByRole = async (role: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}?role=${role}`);
+  return response.data;
+};
+
+export const findUsersByPartialName = async (name: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}?name=${name}`);
+  return response.data;
+};
+
+export const findUserById = async (id: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}/${id}`);
+  return response.data;
+};
+
+export const deleteUser = async (userId: string) => {
+  const response = await axiosWithCredentials.delete(`${USERS_API}/${userId}`);
+  return response.data;
+};
+
+export const createUser = async (user: any) => {
+  const response = await axiosWithCredentials.post(`${USERS_API}`, user);
+  return response.data;
+};
+
+export const findCoursesForUser = async (userId: string) => {
+  const response = await axiosWithCredentials.get(`${USERS_API}/${userId}/courses`);
+  return response.data;
+};
+
+export const enrollIntoCourse = async (userId: string, courseId: string) => {
+  const response = await axiosWithCredentials.post(`${USERS_API}/${userId}/courses/${courseId}`);
+  return response.data;
 };

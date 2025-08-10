@@ -8,6 +8,26 @@ export const fetchAllCourses = async () => {
   return data;
 };
 
+export const createCourse = async (course: any) => {
+  const { data } = await axiosWithCredentials.post(COURSES_API, course);
+  return data;
+};
+
+export const updateCourse = async (course: any) => {
+  const { data } = await axiosWithCredentials.put(`${COURSES_API}/${course._id}`, course);
+  return data;
+};
+
+export const deleteCourse = async (courseId: string) => {
+  const { data } = await axiosWithCredentials.delete(`${COURSES_API}/${courseId}`);
+  return data;
+};
+
+export const findModulesForCourse = async (courseId: string) => {
+  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/modules`);
+  return response.data;
+};
+
 export const createModuleForCourse = async (courseId: string, module: any) => {
   const response = await axiosWithCredentials.post(
     `${COURSES_API}/${courseId}/modules`,
@@ -16,18 +36,17 @@ export const createModuleForCourse = async (courseId: string, module: any) => {
   return response.data;
 };
 
-export const findModulesForCourse = async (courseId: string) => {
-  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/modules`);
+export const findUsersForCourse = async (courseId: string) => {
+  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/users`);
   return response.data;
 };
 
-export const deleteCourse = async (courseId: string) => {
-  console.log("Deleting course with ID:", courseId);
-    const response = await axiosWithCredentials.delete(`${REMOTE_SERVER}/api/courses/${courseId}`);
-    return response.data;
+export const findAssignmentsForCourse = async (courseId: string) => {
+  const response = await axiosWithCredentials.get(`${COURSES_API}/${courseId}/assignments`);
+  return response.data;
 };
 
-export const updateCourse = async (course: any) => {
-    const response = await axiosWithCredentials.put(`${REMOTE_SERVER}/api/courses/${course._id}`, course);
-    return response.data;
+export const createAssignmentForCourse = async (courseId: string, assignment: any) => {
+  const response = await axiosWithCredentials.post(`${COURSES_API}/${courseId}/assignments`, assignment);
+  return response.data;
 };
