@@ -144,7 +144,15 @@ export default function QuestionEditor() {
                   <Form.Label>Question Type</Form.Label>
                   <Form.Select
                     value={editingQuestion.type || "MULTIPLE_CHOICE"}
-                    onChange={(e) => handleQuestionChange("type", e.target.value)}
+                    onChange={(e) => {
+                      const newType = e.target.value;
+                      if (newType === "FILL_IN_BLANK" && (!editingQuestion.possibleAnswers || editingQuestion.possibleAnswers.length === 0)) {
+                        handleQuestionChange("type", newType);
+                        handleQuestionChange("possibleAnswers", [""]);
+                      } else {
+                        handleQuestionChange("type", newType);
+                      }
+                    }}
                   >
                     <option value="MULTIPLE_CHOICE">Multiple Choice</option>
                     <option value="TRUE_FALSE">True/False</option>
@@ -237,20 +245,50 @@ export default function QuestionEditor() {
             {/* Fill in the Blank Options */}
             {editingQuestion.type === "FILL_IN_BLANK" && (
               <Form.Group className="mb-3">
-                <Form.Label>Possible Answers (one per line)</Form.Label>
-                <Form.Control
-                  as="textarea"
-                  rows={3}
-                  placeholder="Enter possible correct answers, one per line"
-                  value={editingQuestion.possibleAnswers?.join('\n') || ""}
-                  onChange={(e) => handleQuestionChange("possibleAnswers", e.target.value.split('\n').filter(a => a.trim()))}
-                />
+                <Form.Label>Possible Answers</Form.Label>
+                {(editingQuestion.possibleAnswers || []).map((answer, idx) => (
+                  <InputGroup className="mb-2" key={idx}>
+                    <Form.Control
+                      type="text"
+                      placeholder={`Possible Answer`}
+                      value={answer}
+                      onChange={e => {
+                        const updated = [...(editingQuestion.possibleAnswers || [])];
+                        updated[idx] = e.target.value;
+                        handleQuestionChange("possibleAnswers", updated);
+                      }}
+                    />
+                    <Button
+                      variant="outline-danger"
+                      onClick={() => {
+                        const updated = [...(editingQuestion.possibleAnswers || [])];
+                        updated.splice(idx, 1);
+                        handleQuestionChange("possibleAnswers", updated);
+                      }}
+                      disabled={(editingQuestion.possibleAnswers?.length || 0) <= 1}
+                    >
+                      <FaTrash />
+                    </Button>
+                  </InputGroup>
+                ))}
+                <Button
+                  variant="link"
+                  className="p-0"
+                  onClick={() => {
+                    handleQuestionChange("possibleAnswers", [
+                      ...(editingQuestion.possibleAnswers || []),
+                      ""
+                    ]);
+                  }}
+                >
+                  + Add Another Answer
+                </Button>
                 <Form.Check
                   className="mt-2"
                   type="checkbox"
                   label="Case Sensitive"
                   checked={editingQuestion.caseSensitive || false}
-                  onChange={(e) => handleQuestionChange("caseSensitive", e.target.checked)}
+                  onChange={e => handleQuestionChange("caseSensitive", e.target.checked)}
                 />
               </Form.Group>
             )}
