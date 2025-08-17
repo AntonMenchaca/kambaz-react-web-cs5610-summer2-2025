@@ -1,0 +1,4 @@
+/* I cant figure out a way to make this cleaner without completely overwriting the dropdown toggle styling */
+.dropdown-toggle-no-caret::after {
+  display: none !important;
+}
