@@ -179,13 +179,8 @@ function Quizzes() {
                         <strong>Points:</strong> {quiz.points || 0}
                       </div>
                       <div>
-                        <strong>Questions:</strong> 0 {/* Will be updated when questions are implemented */}
+                        <strong>Questions:</strong> {quiz.questionCount || 0}
                       </div>
-                      {!isFaculty && (
-                        <div>
-                          <strong>Score:</strong> -- {/* Will show user's score */}
-                        </div>
-                      )}
                     </div>
                   </div>
 

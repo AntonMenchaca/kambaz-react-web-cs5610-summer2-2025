@@ -19,6 +19,8 @@ export interface Quiz {
   availableDate?: Date | string;
   untilDate?: Date | string;
   published: boolean;
+  questions?: Question[];
+  questionCount?: number;
 }
 
 export interface Question {
