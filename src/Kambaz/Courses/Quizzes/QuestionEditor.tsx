@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { FaPlus, FaEdit, FaTrash, FaSave, FaTimes } from "react-icons/fa";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
 import * as quizzesClient from "./client";
 import { Question } from "./types";
 
@@ -114,10 +117,10 @@ export default function QuestionEditor() {
     <div id="wd-question-editor" className="container-fluid">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h3>Quiz Questions</h3>
-        <button className="btn btn-primary" onClick={handleAddQuestion}>
+        <Button variant="primary" onClick={handleAddQuestion}>
           <FaPlus className="me-2" />
           New Question
-        </button>
+        </Button>
       </div>
 
       {isEditing && editingQuestion && (
@@ -126,162 +129,141 @@ export default function QuestionEditor() {
             <h5>{editingQuestion._id ? 'Edit Question' : 'New Question'}</h5>
           </div>
           <div className="card-body">
-            <div className="mb-3">
-              <label className="form-label">Question Title</label>
-              <input
+            <Form.Group className="mb-3">
+              <Form.Label>Question Title</Form.Label>
+              <Form.Control
                 type="text"
-                className="form-control"
                 value={editingQuestion.title || ""}
                 onChange={(e) => handleQuestionChange("title", e.target.value)}
               />
-            </div>
+            </Form.Group>
 
             <div className="row">
               <div className="col-md-6">
-                <div className="mb-3">
-                  <label className="form-label">Question Type</label>
-                  <select
-                    className="form-select"
+                <Form.Group className="mb-3">
+                  <Form.Label>Question Type</Form.Label>
+                  <Form.Select
                     value={editingQuestion.type || "MULTIPLE_CHOICE"}
                     onChange={(e) => handleQuestionChange("type", e.target.value)}
                   >
                     <option value="MULTIPLE_CHOICE">Multiple Choice</option>
                     <option value="TRUE_FALSE">True/False</option>
                     <option value="FILL_IN_BLANK">Fill in the Blank</option>
-                  </select>
-                </div>
+                  </Form.Select>
+                </Form.Group>
               </div>
               <div className="col-md-6">
-                <div className="mb-3">
-                  <label className="form-label">Points</label>
-                  <input
+                <Form.Group className="mb-3">
+                  <Form.Label>Points</Form.Label>
+                  <Form.Control
                     type="number"
-                    className="form-control"
                     value={editingQuestion.points || 1}
                     onChange={(e) => handleQuestionChange("points", parseInt(e.target.value) || 1)}
                   />
-                </div>
+                </Form.Group>
               </div>
             </div>
 
-            <div className="mb-3">
-              <label className="form-label">Question Text</label>
-              <textarea
-                className="form-control"
+            <Form.Group className="mb-3">
+              <Form.Label>Question Text</Form.Label>
+              <Form.Control
+                as="textarea"
                 rows={3}
                 value={editingQuestion.question || ""}
                 onChange={(e) => handleQuestionChange("question", e.target.value)}
               />
-            </div>
+            </Form.Group>
 
             {/* Multiple Choice Options */}
             {editingQuestion.type === "MULTIPLE_CHOICE" && (
-              <div className="mb-3">
-                <label className="form-label">Answer Choices</label>
+              <Form.Group className="mb-3">
+                <Form.Label>Answer Choices</Form.Label>
                 {editingQuestion.choices?.map((choice, index) => (
-                  <div key={index} className="d-flex align-items-center mb-2">
-                    <div className="form-check me-2">
-                      <input
-                        className="form-check-input"
-                        type="radio"
-                        name="correctAnswer"
-                        checked={choice.isCorrect}
-                        onChange={(e) => handleChoiceChange(index, 'isCorrect', e.target.checked)}
-                      />
-                    </div>
-                    <input
+                  <InputGroup className="mb-2" key={index}>
+                    <InputGroup.Radio
+                      name="correctAnswer"
+                      checked={choice.isCorrect}
+                      onChange={(e) => handleChoiceChange(index, 'isCorrect', e.target.checked)}
+                    />
+                    <Form.Control
                       type="text"
-                      className="form-control me-2"
                       placeholder={`Choice ${index + 1}`}
                       value={choice.text}
                       onChange={(e) => handleChoiceChange(index, 'text', e.target.value)}
                     />
                     {editingQuestion.choices && editingQuestion.choices.length > 2 && (
-                      <button
-                        className="btn btn-outline-danger btn-sm"
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
                         onClick={() => removeChoice(index)}
                       >
                         <FaTrash />
-                      </button>
+                      </Button>
                     )}
-                  </div>
+                  </InputGroup>
                 ))}
-                <button className="btn btn-outline-primary btn-sm" onClick={addChoice}>
+                <Button variant="outline-primary" size="sm" onClick={addChoice}>
                   <FaPlus className="me-1" />
                   Add Choice
-                </button>
-              </div>
+                </Button>
+              </Form.Group>
             )}
 
             {/* True/False Options */}
             {editingQuestion.type === "TRUE_FALSE" && (
-              <div className="mb-3">
-                <label className="form-label">Correct Answer</label>
+              <Form.Group className="mb-3">
+                <Form.Label>Correct Answer</Form.Label>
                 <div>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="truefalse"
-                      id="true"
-                      checked={editingQuestion.correctAnswer === true}
-                      onChange={() => handleQuestionChange("correctAnswer", true)}
-                    />
-                    <label className="form-check-label" htmlFor="true">
-                      True
-                    </label>
-                  </div>
-                  <div className="form-check">
-                    <input
-                      className="form-check-input"
-                      type="radio"
-                      name="truefalse"
-                      id="false"
-                      checked={editingQuestion.correctAnswer === false}
-                      onChange={() => handleQuestionChange("correctAnswer", false)}
-                    />
-                    <label className="form-check-label" htmlFor="false">
-                      False
-                    </label>
-                  </div>
+                  <Form.Check
+                    type="radio"
+                    name="truefalse"
+                    id="true"
+                    label="True"
+                    checked={editingQuestion.correctAnswer === true}
+                    onChange={() => handleQuestionChange("correctAnswer", true)}
+                  />
+                  <Form.Check
+                    type="radio"
+                    name="truefalse"
+                    id="false"
+                    label="False"
+                    checked={editingQuestion.correctAnswer === false}
+                    onChange={() => handleQuestionChange("correctAnswer", false)}
+                  />
                 </div>
-              </div>
+              </Form.Group>
             )}
 
             {/* Fill in the Blank Options */}
             {editingQuestion.type === "FILL_IN_BLANK" && (
-              <div className="mb-3">
-                <label className="form-label">Possible Answers (one per line)</label>
-                <textarea
-                  className="form-control"
+              <Form.Group className="mb-3">
+                <Form.Label>Possible Answers (one per line)</Form.Label>
+                <Form.Control
+                  as="textarea"
                   rows={3}
                   placeholder="Enter possible correct answers, one per line"
                   value={editingQuestion.possibleAnswers?.join('\n') || ""}
                   onChange={(e) => handleQuestionChange("possibleAnswers", e.target.value.split('\n').filter(a => a.trim()))}
                 />
-                <div className="form-check mt-2">
-                  <input
-                    className="form-check-input"
-                    type="checkbox"
-                    checked={editingQuestion.caseSensitive || false}
-                    onChange={(e) => handleQuestionChange("caseSensitive", e.target.checked)}
-                  />
-                  <label className="form-check-label">
-                    Case Sensitive
-                  </label>
-                </div>
-              </div>
+                <Form.Check
+                  className="mt-2"
+                  type="checkbox"
+                  label="Case Sensitive"
+                  checked={editingQuestion.caseSensitive || false}
+                  onChange={(e) => handleQuestionChange("caseSensitive", e.target.checked)}
+                />
+              </Form.Group>
             )}
 
             <div className="d-flex gap-2">
-              <button className="btn btn-primary" onClick={handleSaveQuestion}>
+              <Button variant="primary" onClick={handleSaveQuestion}>
                 <FaSave className="me-1" />
                 Save Question
-              </button>
-              <button className="btn btn-secondary" onClick={handleCancelEdit}>
+              </Button>
+              <Button variant="secondary" onClick={handleCancelEdit}>
                 <FaTimes className="me-1" />
                 Cancel
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -301,19 +283,13 @@ export default function QuestionEditor() {
                   Type: {question.type.replace('_', ' ')} | Points: {question.points}
                 </small>
               </div>
-              <div className="d-flex gap-2">
-                <button
-                  className="btn btn-outline-primary btn-sm"
-                  onClick={() => handleEditQuestion(question)}
-                >
+              <div  >
+                <Button className="m-2" variant="outline-primary" size="sm" onClick={() => handleEditQuestion(question)}>
                   <FaEdit />
-                </button>
-                <button
-                  className="btn btn-outline-danger btn-sm"
-                  onClick={() => handleDeleteQuestion(question._id)}
-                >
+                </Button>
+                <Button variant="outline-danger" size="sm" onClick={() => handleDeleteQuestion(question._id)}>
                   <FaTrash />
-                </button>
+                </Button>
               </div>
             </div>
           </div>

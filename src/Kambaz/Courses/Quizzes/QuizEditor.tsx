@@ -45,7 +45,7 @@ export default function QuizEditor() {
     fetchQuiz();
   }, [qid]);
 
-  const handleInputChange = (field: keyof Quiz, value: string | number | boolean | Date) => {
+  const handleInputChange = (field: keyof Quiz, value: string | number | boolean | Date | undefined) => {
     setQuiz(prev => ({ ...prev, [field]: value }));
   };
 
@@ -209,14 +209,32 @@ export default function QuizEditor() {
                       </div>
 
                       <div className="col-md-6">
+                        <div className="mb-3 form-check">
+                          <input
+                            type="checkbox"
+                            className="form-check-input"
+                            id="hasTimeLimit"
+                            checked={quiz.timeLimit !== undefined && quiz.timeLimit !== null}
+                            onChange={e => {
+                              if (e.target.checked) {
+                                handleInputChange("timeLimit", quiz.timeLimit || 20);
+                              } else {
+                                handleInputChange("timeLimit", undefined);
+                              }
+                            }}
+                          />
+                          <label htmlFor="hasTimeLimit" className="form-check-label">Enable Time Limit</label>
+                        </div>
                         <div className="mb-3">
                           <label htmlFor="timeLimit" className="form-label">Time Limit (minutes)</label>
                           <input
                             type="number"
                             className="form-control"
                             id="timeLimit"
-                            value={quiz.timeLimit || 20}
-                            onChange={(e) => handleInputChange("timeLimit", parseInt(e.target.value) || 20)}
+                            value={quiz.timeLimit ?? ''}
+                            min={1}
+                            disabled={quiz.timeLimit === undefined || quiz.timeLimit === null}
+                            onChange={e => handleInputChange("timeLimit", parseInt(e.target.value) || 1)}
                           />
                         </div>
                       </div>
