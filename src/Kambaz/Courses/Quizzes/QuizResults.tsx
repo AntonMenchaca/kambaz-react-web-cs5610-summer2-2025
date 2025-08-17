@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FaArrowLeft, FaRedo } from "react-icons/fa";
+import { FaArrowLeft, FaCheck, FaRedo, FaTimes } from "react-icons/fa";
 import * as quizzesClient from "./client";
 import { Quiz, Question, QuizAttempt } from "./types";
 
@@ -57,29 +57,22 @@ export default function QuizResults() {
   };
 
   const renderQuestionResult = (question: Question, index: number) => {
-    const userAnswer = latestAttempt?.answers?.find(a => a.question === question._id)?.answer;
-    let isCorrect = false;
+    const answerRecord = latestAttempt?.answers?.find(a => a.question === question._id);
+    const userAnswer = answerRecord?.answer;
+    // Use the backend's calculation for correctness and points
+    const isCorrect = answerRecord?.isCorrect || false;
+    const pointsEarned = answerRecord?.pointsEarned || 0;
+
     let correctAnswerText = "";
-    let pointsEarned = 0;
 
     if (question.type === 'MULTIPLE_CHOICE') {
       const correctChoice = question.choices?.find(choice => choice.isCorrect);
       correctAnswerText = correctChoice?.text || "";
-      isCorrect = userAnswer === correctAnswerText;
-      pointsEarned = isCorrect ? question.points : 0;
     } else if (question.type === 'TRUE_FALSE') {
       correctAnswerText = String(question.correctAnswer);
-      isCorrect = userAnswer === question.correctAnswer;
-      pointsEarned = isCorrect ? question.points : 0;
     } else if (question.type === 'FILL_IN_BLANK') {
       const possibleAnswers = question.possibleAnswers || [];
       correctAnswerText = possibleAnswers.join(" or ");
-      const userAnswerLower = userAnswer?.toLowerCase()?.trim();
-      isCorrect = possibleAnswers.some(correct => {
-        const correctLower = correct.toLowerCase().trim();
-        return question.caseSensitive ? userAnswer?.trim() === correct.trim() : userAnswerLower === correctLower;
-      });
-      pointsEarned = isCorrect ? question.points : 0;
     }
 
     return (
@@ -89,7 +82,7 @@ export default function QuizResults() {
             <h6 className="card-title mb-0">
               Question {index + 1}
               <span className={`badge ms-2 ${isCorrect ? 'bg-success' : 'bg-danger'}`}>
-                {isCorrect ? '✓' : '✗'} {pointsEarned}/{question.points} pts
+                {isCorrect ? <FaCheck className="me-1" /> : <FaTimes className="me-1" />} {pointsEarned}/{question.points} pts
               </span>
             </h6>
           </div>

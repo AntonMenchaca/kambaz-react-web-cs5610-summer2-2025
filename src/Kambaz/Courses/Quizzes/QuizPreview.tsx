@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FaEdit, FaArrowLeft } from "react-icons/fa";
+import { FaEdit, FaArrowLeft, FaCheck, FaTimes } from "react-icons/fa";
 import * as quizzesClient from "./client";
 import { Quiz, Question } from "./types";
 
@@ -111,7 +111,7 @@ export default function QuizPreview() {
               Question {index + 1}
               {showResults && (
                 <span className={`badge ms-2 ${isCorrect ? 'bg-success' : 'bg-danger'}`}>
-                  {isCorrect ? '✓' : '✗'} {question.points} pts
+                  {isCorrect ? <FaCheck className="me-1" /> : <FaTimes className="me-1" />} {question.points} pts
                 </span>
               )}
             </h5>

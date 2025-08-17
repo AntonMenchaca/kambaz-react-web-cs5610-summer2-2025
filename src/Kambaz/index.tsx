@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router";
 import Dashboard from "./Dashboard";
 import KambazNavigation from "./Navigation";
 import Courses from "./Courses";
+import Logout from "./Account/Logout";
 import "./styles.css";
 import { useState, useEffect } from "react";
 import ProtectedRoute from "./Account/ProtectedRoute";
@@ -104,6 +105,7 @@ export default function Kambaz() {
           <Routes>
             <Route path="/" element={<Navigate to="Account" />} />
             <Route path="/Account/*" element={<Account />} />
+            <Route path="/logout" element={<Logout />} />
             <Route path="/Dashboard" element={
               <ProtectedRoute>
                 <Dashboard

@@ -9,6 +9,7 @@ import QuizEditor from "./Quizzes/QuizEditor";
 import QuizPreview from "./Quizzes/QuizPreview";
 import QuizTaking from "./Quizzes/QuizTaking";
 import QuizResults from "./Quizzes/QuizResults";
+import Logout from "../Account/Logout";
 import { Route, Routes, useParams, useLocation } from "react-router";
 import { FaAlignJustify } from "react-icons/fa";
 import PeopleTable from "./People/Table";
@@ -31,6 +32,7 @@ export default function Courses({ courses }: { courses: any[]; }) {
         </div>
         <div className="flex-fill">
           <Routes>
+            <Route path="logout" element={<Logout />} />
             <Route path="Home" element={<Home />} />
             <Route path="Modules" element={<Modules />} />
             <Route path="Assignments" element={<Assignments />} />

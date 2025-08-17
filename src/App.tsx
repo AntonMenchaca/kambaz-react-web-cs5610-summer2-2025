@@ -1,6 +1,7 @@
 import Labs from "./Labs";
 import { HashRouter, Route, Routes, Navigate } from "react-router-dom";
 import Kambaz from "./Kambaz";
+import Logout from "./Kambaz/Account/Logout";
 import store from "./Kambaz/store";
 import { Provider } from "react-redux";
 export default function App() {
@@ -10,6 +11,7 @@ export default function App() {
         <div>
           <Routes>
             <Route path="/" element={<Navigate to="Kambaz" />} />
+            <Route path="/logout" element={<Logout />} />
             <Route path="/Labs/*" element={<Labs />} />
             <Route path="/Kambaz/*" element={<Kambaz />} />
           </Routes>
