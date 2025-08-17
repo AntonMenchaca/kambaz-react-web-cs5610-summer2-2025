@@ -24,6 +24,7 @@ function Quizzes() {
     try {
       setLoading(true);
       const courseQuizzes = await quizzesClient.findQuizzesForCourse(cid);
+      console.log("Fetched quizzes:", courseQuizzes);
       setQuizzes(courseQuizzes);
     } catch (error) {
       console.error("Error fetching quizzes:", error);
@@ -128,92 +129,103 @@ function Quizzes() {
         </div>
       ) : (
         <div className="list-group">
-          {quizzes.map((quiz) => (
-            <div key={quiz._id} className="list-group-item">
-              <div className="d-flex justify-content-between align-items-start">
-                <div className="flex-grow-1">
-                  <div className="d-flex align-items-center mb-2">
-                    {isFaculty && (
-                      <button
-                        className="btn btn-link p-0 me-2"
-                        onClick={() => handlePublishToggle(quiz)}
-                      >
-                        {quiz.published ? (
-                          <FaCheckCircle className="text-success" />
-                        ) : (
-                          <FaBan className="text-muted" />
-                        )}
-                      </button>
-                    )}
-                    <h5
-                      className="mb-0 text-primary"
-                      style={{ cursor: "pointer" }}
-                      onClick={() => navigate(`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}/details`)}
-                    >
-                      {quiz.title}
-                    </h5>
-                  </div>
-
-                  <div className="text-muted small">
-                    <div>
-                      <strong>Availability:</strong> {getAvailabilityStatus(quiz)}
-                    </div>
-                    {quiz.dueDate && (
-                      <div>
-                        <strong>Due:</strong> {new Date(quiz.dueDate).toLocaleDateString()}
-                      </div>
-                    )}
-                    <div>
-                      <strong>Points:</strong> {quiz.points || 0}
-                    </div>
-                    <div>
-                      <strong>Questions:</strong> 0 {/* Will be updated when questions are implemented */}
-                    </div>
-                    {!isFaculty && (
-                      <div>
-                        <strong>Score:</strong> -- {/* Will show user's score */}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {isFaculty && (
-                  <Dropdown align="end">
-                    <Dropdown.Toggle
-                      as={forwardRef<HTMLButtonElement, { onClick?: (event: MouseEvent<HTMLButtonElement>) => void }>(
-                        ({ onClick }, ref) => (
-                          <button
-                            ref={ref}
-                            className="btn btn-link p-0 border-0 bg-transparent"
-                            style={{ boxShadow: "none" }}
-                            onClick={e => {
-                              e.preventDefault();
-                              if (onClick) onClick(e);
-                            }}
-                            aria-label="Quiz actions"
-                          >
-                            <FaEllipsisV />
-                          </button>
-                        )
+          {[...quizzes]
+            .sort((a, b) => {
+              const aDate = a.availableDate ? new Date(a.availableDate).getTime() : Number.MAX_SAFE_INTEGER;
+              const bDate = b.availableDate ? new Date(b.availableDate).getTime() : Number.MAX_SAFE_INTEGER;
+              return aDate - bDate;
+            })
+            .map((quiz) => (
+              <div key={quiz._id} className="list-group-item">
+                <div className="d-flex justify-content-between align-items-start">
+                  <div className="flex-grow-1">
+                    <div className="d-flex align-items-center mb-2">
+                      {isFaculty && (
+                        <button
+                          className="btn btn-link p-0 me-2"
+                          onClick={() => handlePublishToggle(quiz)}
+                        >
+                          {quiz.published ? (
+                            <FaCheckCircle className="text-success" />
+                          ) : (
+                            <FaBan className="text-muted" />
+                          )}
+                        </button>
                       )}
-                      id={`dropdown-${quiz._id}`}
-                    />
-                    <Dropdown.Menu>
-                      <Dropdown.Item onClick={() => navigate(`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}/edit`)}>
-                        Edit
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={() => handleDeleteQuiz(quiz._id)}>
-                        Delete
-                      </Dropdown.Item>
-                      <Dropdown.Item onClick={() => handlePublishToggle(quiz)}>
-                        {quiz.published ? "Unpublish" : "Publish"}
-                      </Dropdown.Item>
-                    </Dropdown.Menu>
-                  </Dropdown>
-                )}
+                      <h5
+                        className="mb-0 text-primary"
+                        style={{ cursor: "pointer", marginRight: 10 }}
+                        onClick={() => navigate(`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}/details`)}
+                      >
+                        {quiz.title}
+                      </h5>
+                    </div>
+
+                    <div className="text-muted small">
+                      <div>
+                        <strong>Availability:</strong> {getAvailabilityStatus(quiz)}
+                      </div>
+                      {quiz.availableDate && (
+                        <div>
+                          <strong>Available:</strong> {new Date(quiz.availableDate).toLocaleDateString()}
+                        </div>
+                      )}
+                      {quiz.dueDate && (
+                        <div>
+                          <strong>Due:</strong> {new Date(quiz.dueDate).toLocaleDateString()}
+                        </div>
+                      )}
+                      <div>
+                        <strong>Points:</strong> {quiz.points || 0}
+                      </div>
+                      <div>
+                        <strong>Questions:</strong> 0 {/* Will be updated when questions are implemented */}
+                      </div>
+                      {!isFaculty && (
+                        <div>
+                          <strong>Score:</strong> -- {/* Will show user's score */}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {isFaculty && (
+                    <Dropdown align="end">
+                      <Dropdown.Toggle
+                        as={forwardRef<HTMLButtonElement, { onClick?: (event: MouseEvent<HTMLButtonElement>) => void }>(
+                          ({ onClick }, ref) => (
+                            <button
+                              ref={ref}
+                              className="btn btn-link p-0 border-0 bg-transparent"
+                              style={{ boxShadow: "none" }}
+                              onClick={e => {
+                                e.preventDefault();
+                                if (onClick) onClick(e);
+                              }}
+                              aria-label="Quiz actions"
+                            >
+                              <FaEllipsisV />
+                            </button>
+                          )
+                        )}
+                        id={`dropdown-${quiz._id}`}
+                      />
+                      <Dropdown.Menu>
+                        <Dropdown.Item onClick={() => navigate(`/Kambaz/Courses/${cid}/Quizzes/${quiz._id}/edit`)}>
+                          Edit
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => handleDeleteQuiz(quiz._id)}>
+                          Delete
+                        </Dropdown.Item>
+                        <Dropdown.Item onClick={() => handlePublishToggle(quiz)}>
+                          {quiz.published ? "Unpublish" : "Publish"}
+                        </Dropdown.Item>
+                      </Dropdown.Menu>
+                    </Dropdown>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       )}
     </div>
