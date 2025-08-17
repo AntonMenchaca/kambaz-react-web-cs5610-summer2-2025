@@ -18,7 +18,7 @@ export default function QuizTaking() {
   const [loading, setLoading] = useState(true);
   const [showSubmitModal, setShowSubmitModal] = useState(false);
   const [previousAttempts, setPreviousAttempts] = useState<QuizAttempt[]>([]);
-  const [startTime, setStartTime] = useState<Date | null>(null);
+  const [currentAttempt, setCurrentAttempt] = useState<QuizAttempt | null>(null);
 
   const fetchQuizData = useCallback(async () => {
     if (!qid) return;
@@ -35,7 +35,7 @@ export default function QuizTaking() {
       try {
         const attempts = await quizzesClient.findAttemptsForUserAndQuiz(currentUser._id, qid);
         setPreviousAttempts(attempts);
-      } catch (error) {
+      } catch {
         console.log("No previous attempts found");
       }
 
@@ -70,42 +70,36 @@ export default function QuizTaking() {
   const startAttempt = async () => {
     if (!quiz || !qid) return;
     try {
+      // Create a new attempt in the backend
+      const newAttempt = await quizzesClient.createAttemptForUser(currentUser._id, qid);
+      setCurrentAttempt(newAttempt);
       setAttemptStarted(true);
       setTimeRemaining(quiz.timeLimit * 60); // Convert minutes to seconds
-      setStartTime(new Date());
     } catch (error) {
       console.error("Error starting quiz attempt:", error);
     }
   };
 
-  const handleAnswerChange = (questionId: string, answer: any) => {
+  const handleAnswerChange = (questionId: string, answer: string | boolean) => {
     setAnswers(prev => ({ ...prev, [questionId]: answer }));
   };
 
-  const handleSubmitQuiz = async () => {
-    if (!qid) return;
+  const handleSubmitQuiz = useCallback(async () => {
+    if (!qid || !currentAttempt) return;
     try {
-      const timeSpent = startTime ? Math.round((new Date().getTime() - startTime.getTime()) / (1000 * 60)) : 0;
+      // Format answers for submission
+      const formattedAnswers = Object.keys(answers).map(questionId => ({
+        question: questionId,
+        answer: answers[questionId]
+      }));
 
-      // Create attempt object
-      const attemptData = {
-        quiz: qid,
-        user: currentUser._id,
-        answers: Object.keys(answers).map(questionId => ({
-          question: questionId,
-          answer: answers[questionId]
-        })),
-        startedAt: startTime,
-        submittedAt: new Date(),
-        timeSpent
-      };
-
-      await quizzesClient.submitAttempt(qid + "-" + Date.now(), attemptData.answers);
-      navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/results`);
+      await quizzesClient.submitAttempt(currentAttempt._id, formattedAnswers);
+      // Add timestamp to force route refresh
+      navigate(`/Kambaz/Courses/${cid}/Quizzes/${qid}/results?t=${Date.now()}`);
     } catch (error) {
       console.error("Error submitting quiz:", error);
     }
-  };
+  }, [qid, currentAttempt, answers, navigate, cid]);
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60);

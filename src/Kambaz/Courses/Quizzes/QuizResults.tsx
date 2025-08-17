@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { FaArrowLeft, FaRedo } from "react-icons/fa";
 import * as quizzesClient from "./client";
@@ -8,7 +8,8 @@ import { Quiz, Question, QuizAttempt } from "./types";
 export default function QuizResults() {
   const { cid, qid } = useParams();
   const navigate = useNavigate();
-  const { currentUser } = useSelector((state: { accountReducer: { currentUser: any } }) => state.accountReducer);
+  const [searchParams] = useSearchParams();
+  const { currentUser } = useSelector((state: { accountReducer: { currentUser: { _id: string } } }) => state.accountReducer);
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [latestAttempt, setLatestAttempt] = useState<QuizAttempt | null>(null);
@@ -32,9 +33,10 @@ export default function QuizResults() {
         const attempts = await quizzesClient.findAttemptsForUserAndQuiz(currentUser._id, qid);
         setAllAttempts(attempts);
         if (attempts.length > 0) {
-          setLatestAttempt(attempts[attempts.length - 1]);
+          // Attempts are sorted by attempt number descending, so first is latest
+          setLatestAttempt(attempts[0]);
         }
-      } catch (error) {
+      } catch {
         console.log("No attempts found for this user");
       }
 
@@ -47,7 +49,7 @@ export default function QuizResults() {
 
   useEffect(() => {
     fetchData();
-  }, [fetchData]);
+  }, [fetchData, searchParams]);
 
   const canRetakeQuiz = () => {
     if (!quiz || !latestAttempt) return false;
@@ -122,10 +124,10 @@ export default function QuizResults() {
                   <div
                     key={choiceIndex}
                     className={`p-2 mb-1 rounded small ${choice.isCorrect
-                        ? "bg-success bg-opacity-10 border border-success"
-                        : userAnswer === choice.text && !choice.isCorrect
-                          ? "bg-danger bg-opacity-10 border border-danger"
-                          : "bg-light"
+                      ? "bg-success bg-opacity-10 border border-success"
+                      : userAnswer === choice.text && !choice.isCorrect
+                        ? "bg-danger bg-opacity-10 border border-danger"
+                        : "bg-light"
                       }`}
                   >
                     {choice.isCorrect && "✓ "}
@@ -158,7 +160,7 @@ export default function QuizResults() {
     );
   }
 
-  const scorePercentage = quiz.points > 0 ? (latestAttempt.score / quiz.points) * 100 : 0;
+  const scorePercentage = latestAttempt.totalPoints > 0 ? (latestAttempt.score / latestAttempt.totalPoints) * 100 : 0;
 
   return (
     <div id="wd-quiz-results" className="container-fluid">
@@ -190,9 +192,9 @@ export default function QuizResults() {
           <div className="row">
             <div className="col-md-6">
               <h4 className="mb-3">
-                Score: {latestAttempt.score}/{quiz.points} points
+                Score: {latestAttempt.score}/{latestAttempt.totalPoints} points
                 <span className={`badge ms-2 ${scorePercentage >= 70 ? 'bg-success' :
-                    scorePercentage >= 60 ? 'bg-warning text-dark' : 'bg-danger'
+                  scorePercentage >= 60 ? 'bg-warning text-dark' : 'bg-danger'
                   }`}>
                   {scorePercentage.toFixed(1)}%
                 </span>
@@ -220,10 +222,10 @@ export default function QuizResults() {
                 <div>
                   <h6>Previous Attempts:</h6>
                   <div className="small">
-                    {allAttempts.slice(0, -1).map((attempt, index) => (
+                    {allAttempts.slice(1).map((attempt) => (
                       <div key={attempt._id} className="text-muted mb-1">
-                        Attempt {index + 1}: {attempt.score}/{quiz.points} points
-                        ({quiz.points > 0 ? ((attempt.score / quiz.points) * 100).toFixed(1) : 0}%)
+                        Attempt {attempt.attempt}: {attempt.score}/{attempt.totalPoints} points
+                        ({attempt.totalPoints > 0 ? ((attempt.score / attempt.totalPoints) * 100).toFixed(1) : 0}%)
                       </div>
                     ))}
                   </div>

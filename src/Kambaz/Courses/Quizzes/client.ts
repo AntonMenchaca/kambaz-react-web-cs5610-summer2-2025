@@ -107,6 +107,11 @@ export const startQuizAttempt = async (quizId: string): Promise<QuizAttempt> => 
   return response.data;
 };
 
+export const createAttemptForUser = async (userId: string, quizId: string): Promise<QuizAttempt> => {
+  const response = await axios.post(`${QUIZZES_API}/users/${userId}/quizzes/${quizId}/attempts`);
+  return response.data;
+};
+
 export const getQuizAttempts = async (quizId: string): Promise<QuizAttempt[]> => {
   const response = await axios.get(`${QUIZZES_API}/quizzes/${quizId}/attempts`);
   return response.data;
